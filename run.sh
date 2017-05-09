@@ -27,12 +27,21 @@ touch /var/log/nginx/access.log \
 
 php init --env=Development --overwrite=All
 
+if [ -d /app/vendor/bower-asset ]; then
+    echo "Assets are in bower-asset"
+    mv /app/vendor/bower-asset bower
+fi;
+
+cp common.main-local.php common/config/main-local.php
+
+#mv /app/vendor/bower-asset bower
+
 find /app/backend/runtime -type d -print0 | xargs -0 chmod 777
-find /app/common/runtime -type d -print0 | xargs -0 chmod 777
+# find /app/common/runtime -type d -print0 | xargs -0 chmod 777
 find /app/frontend/runtime -type d -print0 | xargs -0 chmod 777
 
 find /app/backend/runtime -type f -print0 | xargs -0 chmod 666
-find /app/common/web/assets -type d -print0 | xargs -0 chmod 777
+# find /app/common/web/assets -type d -print0 | xargs -0 chmod 777
 find /app/frontend/web/assets -type f -print0 | xargs -0 chmod 666
 
 # start PHP and nginx

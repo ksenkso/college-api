@@ -2,7 +2,7 @@ server {
      listen 80 default_server;
      listen [::]:80 default_server ipv6only=on;
 
-     root /app/web;
+     root /app/frontend/web;
      index index.php;
      server_name web;
 

@@ -28,20 +28,27 @@ RUN apt-get update && \
         php5-pgsql \
         php5-xsl && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /app/*
 
 # Initialize application
 WORKDIR /app
-COPY . /app
+
 
 # Install composer && global asset plugin (Yii 2.0 requirement)
 ENV COMPOSER_HOME /root/.composer
 ENV PATH /root/.composer/vendor/bin:$PATH
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+ADD config.json /root/.composer/config.json
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer && \
+    /usr/local/bin/composer global require "fxp/composer-asset-plugin"
 
 # Install application template and packages
 # Yii 2.0 application and its extensions can be used directly from the image or serve as local cache
-RUN composer install
+RUN /usr/local/bin/composer create-project \
+    yiisoft/yii2-app-advanced:2.* \
+    /app
+
+COPY . /app
+
 
 # Configure nginx
 ADD default /etc/nginx/sites-available/default
