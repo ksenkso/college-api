@@ -12,11 +12,22 @@ namespace frontend\modules\controllers;
 use frontend\modules\models\User;
 use frontend\modules\models\UserSearch;
 use Yii;
+use yii\filters\auth\HttpBearerAuth;
 use yii\rest\ActiveController;
+use yii\web\NotFoundHttpException;
 
 class UserController extends ActiveController
 {
     public $modelClass = 'frontend\models\User';
+
+	public function behaviors()
+	{
+		$behaviors = parent::behaviors();
+		$behaviors['authenticator'] = [
+			'class' => HttpBearerAuth::className(),
+		];
+		return $behaviors;
+	}
 
     public function actions()
     {
@@ -62,10 +73,24 @@ class UserController extends ActiveController
         }
     }
 
-    public function actionUpdate($id)
+	/**
+	 * @param $id
+	 *
+	 * @return array|null|\yii\db\ActiveRecord
+	 */
+	public function actionUpdate($id)
     {
 
+	    /**
+	     * @var $model User
+	     */
+
         $model = User::find()->where(['id' => $id])->one();
+
+        if (!$model) {
+	        throw new NotFoundHttpException('User with such id not found');
+        }
+
         $arr = User::find()->where(['id' => $id])->asArray()->one();
         $ph = $model->password_hash;
 
@@ -76,11 +101,7 @@ class UserController extends ActiveController
         if ($model->load($post)) {
             Yii::trace('loaded');
 
-            if ($model->updateUser($ph)) {
-                return $model;
-            } else {
-                return $model->getErrors();
-            }
+	        return $model->updateUser( $ph ) ? $model : $model->getErrors();
 
         } else {
             Yii::trace('failed to load');

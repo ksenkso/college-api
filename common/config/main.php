@@ -12,8 +12,20 @@ return [
             'rules' => [
                 [
                     'class' => 'yii\rest\UrlRule',
-                    'controller' => 'api/user'
+                    'controller' => 'api/user',
+                    'extraPatterns' => [
+	                    'OPTIONS' => 'options'
+                    ],
                 ],
+	            [
+		            'class' => 'yii\rest\UrlRule',
+		            'controller' => 'api/auth',
+		            'extraPatterns' => [
+			            'DELETE' => 'delete',
+			            'HEAD' => 'check',
+			            'OPTIONS check' => 'options'
+		            ],
+	            ],
             ],
         ],
     ],

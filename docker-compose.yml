@@ -1,0 +1,46 @@
+version: '2'
+services:
+  proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - $HOME/certs:/etc/nginx/certs
+  api:
+    image: ksenkso/api:test
+    expose:
+      - 80
+    depends_on:
+      - proxy
+      - api-db
+    environment:
+      - MYSQL_HOST=api-db
+      - VIRTUAL_HOST=api.journal.ru
+      - YII_ENV=dev
+      - YII_ENV_TEST=0
+    volumes:
+      - /home/ksenkso/college-api/frontend:/app/frontend
+      - /home/ksenkso/college-api/common:/app/common
+    command: /bin/bash /root/run.sh
+  api-db:
+    image: mysql
+    expose:
+      - 3306
+    volumes:
+      - /usr/src/dbdata:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=812KKKlm102
+  cabinet:
+    image: ksenkso/cabinet:test
+    expose:
+      - 80
+    volumes:
+      - /home/ksenkso/college-cabinet:/usr/src/t-app
+    environment:
+      - VIRTUAL_HOST=journal.ru
+    depends_on:
+      - proxy
+    command: npm run -- ng serve -w --host 0.0.0.0 --port 80
+
