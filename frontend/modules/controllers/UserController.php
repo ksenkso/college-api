@@ -19,6 +19,7 @@ class UserController extends ApiController
 {
     public $modelClass = 'frontend\models\User';
 
+
 	public function actions()
     {
         $actions = parent::actions();

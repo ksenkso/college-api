@@ -114,6 +114,7 @@ class ApiController extends ActiveController {
 		if (Yii::$app->getRequest()->getMethod() !== 'OPTIONS') {
 			Yii::$app->getResponse()->setStatusCode(405);
 		}
+
 		$options = ['GET', 'HEAD', 'POST','OPTIONS', 'PUT', 'DELETE'];
 		Yii::$app->getResponse()->getHeaders()->set('Allow', implode(',', $options));
 		Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Methods', implode(',', $options));
