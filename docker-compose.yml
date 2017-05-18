@@ -23,6 +23,7 @@ services:
     volumes:
       - /home/ksenkso/college-api/frontend:/app/frontend
       - /home/ksenkso/college-api/common:/app/common
+      - /home/ksenkso/college-api/console:/app/console
     command: /bin/bash /root/run.sh
   api-db:
     image: mysql

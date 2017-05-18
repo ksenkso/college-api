@@ -9,14 +9,15 @@
 namespace frontend\modules\controllers ;
 
 
-use frontend\modules\modelsStudents;
-use frontend\modules\modelsStudentsSearch;
+use frontend\modules\models\Students;
+use frontend\modules\models\StudentsSearch;
 use Yii;
-use yii\rest\ActiveController;
 
-class StudentController extends ActiveController
+class StudentController extends ApiController
 {
-    public $modelClass = 'frontend\models\Students';
+    public $modelClass = 'frontend\modules\models\Students';
+
+
 
     public function actions()
     {
@@ -34,15 +35,6 @@ class StudentController extends ActiveController
     public function actionIndex()
     {
         $students = Students::find()->asArray()->all();
-        $result = [
-            'byId' => [],
-            'ids' => []
-        ];
-
-        /*foreach ($students as $student) {
-            $result['byId'][$student['student_id']] = $student;
-            $result['ids'][] = (int)$student['student_id'];
-        }*/
 
         return $students;
     }

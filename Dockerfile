@@ -45,7 +45,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Yii 2.0 application and its extensions can be used directly from the image or serve as local cache
 RUN /usr/local/bin/composer create-project \
     yiisoft/yii2-app-advanced:2.* \
-    /app
+    /app && \
+    cp frontend.main-local.php /app/frontend/config/main-local.php
 
 COPY . /app
 

@@ -26,6 +26,13 @@ return [
                 ],
             ],
         ],
+        'db' => [
+	        'class' => 'yii\db\Connection',
+	        'dsn' => "mysql:host=$host;dbname=$dbname",
+	        'username' => 'root',
+	        'password' => $pass,
+	        'charset' => 'utf8',
+        ]
     ],
     'params' => $params,
 ];

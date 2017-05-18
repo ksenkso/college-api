@@ -2,13 +2,11 @@
 
 namespace frontend\modules\controllers ;
 
-use frontend\modules\modelsEvent;
-use frontend\modules\modelsEventSearch;
 use Yii;
-use yii\filters\VerbFilter;
-use yii\rest\ActiveController;
+use frontend\modules\models\Event;
+use frontend\modules\models\EventSearch;
 
-class EventController extends ActiveController
+class EventController extends ApiController
 {
     public $modelClass = 'frontend\models\Event';
 
@@ -24,30 +22,6 @@ class EventController extends ActiveController
 
         return $actions;
     }
-
-
-
-    protected function verbs()
-    {
-        return [
-            'index' => ['GET', 'HEAD'],
-            'view' => ['GET', 'HEAD'],
-            'create' => ['POST'],
-            'update' => ['PUT', 'PATCH'],
-            'delete' => ['DELETE'],
-        ];
-    }
-
-    /*public function verbs()
-    {
-        return [
-          'class' => VerbFilter::className(),
-            'actions' => [
-                'create' => ['post'],
-                'index' => ['get', 'head']
-            ]
-        ];
-    }*/
 
     private function getModels()
     {

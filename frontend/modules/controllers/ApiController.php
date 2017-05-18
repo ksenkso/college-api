@@ -10,6 +10,7 @@ namespace frontend\modules\controllers;
 
 
 use Yii;
+use yii\filters\auth\HttpBearerAuth;
 use yii\filters\Cors;
 use yii\rest\ActiveController;
 use yii\web\UnauthorizedHttpException;
@@ -31,7 +32,11 @@ class ApiController extends ActiveController {
 	}
 
 	public function behaviors() {
-		$b               = parent::behaviors();
+		$b = parent::behaviors();
+		$b['authenticator'] = [
+			'class' => HttpBearerAuth::className(),
+		];
+
 		$auth = $b['authenticator'];
 		$b['corsFilter'] = [
 
@@ -109,9 +114,11 @@ class ApiController extends ActiveController {
 		if (Yii::$app->getRequest()->getMethod() !== 'OPTIONS') {
 			Yii::$app->getResponse()->setStatusCode(405);
 		}
-		$options = ['POST','OPTIONS'];
-		Yii::$app->getResponse()->getHeaders()->set('Allow', implode(', ', $options));
+
+		$options = ['GET', 'HEAD', 'POST','OPTIONS', 'PUT', 'DELETE'];
+		Yii::$app->getResponse()->getHeaders()->set('Allow', implode(',', $options));
+		Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Methods', implode(',', $options));
 		Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Origin', 'http://journal.ru');
-		Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Headers', join(',', ['X-Token', 'Authorization']));
+		Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Headers', join(',', ['X-Token', 'Authorization', 'Content-Type', 'Content-Length']));
 	}
 }

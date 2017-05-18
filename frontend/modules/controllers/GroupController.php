@@ -9,12 +9,12 @@
 namespace frontend\modules\controllers ;
 
 
-use frontend\modules\modelsGroup;
-use frontend\modules\modelsGroupSearch;
+use frontend\modules\models\Group;
+use frontend\modules\models\GroupSearch;
 use Yii;
 use yii\rest\ActiveController;
 
-class GroupController extends ActiveController
+class GroupController extends ApiController
 {
     public $modelClass = 'frontend\models\Group';
 
