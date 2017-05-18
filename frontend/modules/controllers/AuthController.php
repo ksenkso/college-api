@@ -23,7 +23,13 @@ class AuthController extends ApiController
 		return $verbs;
 	}
 
-    public $modelClass = 'frontend\models\User';
+	public function behaviors() {
+		$b = parent::behaviors();
+		unset($b['authenticator']);
+		return $b;
+	}
+
+	public $modelClass = 'frontend\models\User';
 
 
 
@@ -68,7 +74,7 @@ class AuthController extends ApiController
 
     }
 
-	public function actionCheck() {
+	public function actionCheck($route = 'dashboard') {
 
 		$request = Yii::$app->request;
 
@@ -83,7 +89,14 @@ class AuthController extends ApiController
 		$user = User::findIdentityByAccessToken($token);
 		if ($user) {
 			Yii::trace('test');
-			return true;
+			$auth = Yii::$app->authManager;
+
+			$perms = $auth->getPermissionsByUser($user->id);
+			if ($perms) {
+				foreach ( $perms as $perm ) {
+					if ($perm->name === 'nav' . ucfirst($route)) return true;
+				}
+			}
 		}
 		throw new NotFoundHttpException('User with this token not found');
     }

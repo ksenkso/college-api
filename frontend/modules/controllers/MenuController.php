@@ -17,6 +17,7 @@ class MenuController extends ApiController
 {
     public $modelClass = 'frontend\models\User';
 
+	/*
 	public function behaviors()
 	{
 		$behaviors = parent::behaviors();
@@ -25,6 +26,7 @@ class MenuController extends ApiController
 		];
 		return $behaviors;
 	}
+	*/
 
     public function actions()
     {
@@ -42,7 +44,7 @@ class MenuController extends ApiController
     public function actionIndex()
     {
         $menu = [
-            'index' => ['title' => 'Главная', 'path' => 'index'],
+            'dashboard' => ['title' => 'Главная', 'path' => ''],
             'calendar' => ['title' => 'Календарь', 'path' => 'calendar'],
             'students' => ['title' => 'Студенты', 'path' => 'students'],
             'groups' => ['title' => 'Группы', 'path' => 'groups'],
@@ -57,7 +59,7 @@ class MenuController extends ApiController
 	        if ($user) {
 		        if ($user->can('admin')) {
 			        return [
-				        $menu['index'],
+				        $menu['dashboard'],
 				        $menu['calendar'],
 				        $menu['students'],
 				        $menu['documents'],
@@ -69,7 +71,7 @@ class MenuController extends ApiController
 
 		        if ($user->can('teacher')) {
 			        return [
-				        $menu['index'],
+				        $menu['dashboard'],
 				        $menu['calendar'],
 				        $menu['students'],
 				        $menu['documents'],
@@ -77,7 +79,7 @@ class MenuController extends ApiController
 			        ];
 		        }
 
-		        return [$menu['index']];
+		        return [$menu['dashboard']];
 	        }
         }
 		throw new UnauthorizedHttpException('Authorization token is invalid');
