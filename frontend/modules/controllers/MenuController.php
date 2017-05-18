@@ -9,14 +9,24 @@
 namespace frontend\modules\controllers ;
 
 
-use frontend\modules\modelsUserSearch;
-use frontend\modules\modelsUser;
-use Yii;
-use yii\rest\ActiveController;
+use frontend\modules\models\User;
+use yii\filters\auth\HttpBearerAuth;
+use yii\web\UnauthorizedHttpException;
 
-class MenuController extends ActiveController
+class MenuController extends ApiController
 {
     public $modelClass = 'frontend\models\User';
+
+	/*
+	public function behaviors()
+	{
+		$behaviors = parent::behaviors();
+		$behaviors['authenticator'] = [
+			'class' => HttpBearerAuth::className(),
+		];
+		return $behaviors;
+	}
+	*/
 
     public function actions()
     {
@@ -34,7 +44,7 @@ class MenuController extends ActiveController
     public function actionIndex()
     {
         $menu = [
-            'index' => ['title' => 'Главная', 'path' => 'index'],
+            'dashboard' => ['title' => 'Главная', 'path' => ''],
             'calendar' => ['title' => 'Календарь', 'path' => 'calendar'],
             'students' => ['title' => 'Студенты', 'path' => 'students'],
             'groups' => ['title' => 'Группы', 'path' => 'groups'],
@@ -43,30 +53,36 @@ class MenuController extends ActiveController
             'hours' => ['title' => 'Посещаемость', 'path' => 'hours'],
         ];
 
-        $user = Yii::$app->user;
-        if ($user->can('admin')) {
-            return [
-                $menu['index'],
-                $menu['calendar'],
-                $menu['students'],
-                $menu['documents'],
-                $menu['groups'],
-                $menu['users'],
-                $menu['hours']
-            ];
-        }
+        $token = $this->parseBearerAuthToken();
+        if ($token) {
+	        $user = User::findIdentityByAccessToken($token);
+	        if ($user) {
+		        if ($user->can('admin')) {
+			        return [
+				        $menu['dashboard'],
+				        $menu['calendar'],
+				        $menu['students'],
+				        $menu['documents'],
+				        $menu['groups'],
+				        $menu['users'],
+				        $menu['hours']
+			        ];
+		        }
 
-        if ($user->can('teacher')) {
-            return [
-                $menu['index'],
-                $menu['calendar'],
-                $menu['students'],
-                $menu['documents'],
-                $menu['hours']
-            ];
-        }
+		        if ($user->can('teacher')) {
+			        return [
+				        $menu['dashboard'],
+				        $menu['calendar'],
+				        $menu['students'],
+				        $menu['documents'],
+				        $menu['hours']
+			        ];
+		        }
 
-        return [$menu['index']];
+		        return [$menu['dashboard']];
+	        }
+        }
+		throw new UnauthorizedHttpException('Authorization token is invalid');
     }
 
 }
