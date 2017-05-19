@@ -31,10 +31,10 @@ class EventController extends ApiController
 	 * @return array|\yii\db\ActiveRecord[]
 	 * @throws HttpException
 	 */
-    public function actionIndex($year, $month)
+    public function actionIndex($year, $month, $day)
     {
-        $startDate = mktime(0, 0, 0, $month+1, 1, $year);
-        $endDate = mktime(0, 0, 0, $month+2, 0, $year);
+        $startDate = mktime(0, 0, 0, $month+1, $day, $year);
+        $endDate = mktime(0, 0, 0, $month+1, $day+1, $year);
 
         Yii::trace(json_encode([$startDate, $endDate]));
 
