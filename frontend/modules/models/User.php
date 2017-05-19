@@ -3,6 +3,9 @@
 namespace frontend\modules\models;
 
 use Yii;
+use yii\db\ActiveRecord;
+use yii\db\Query;
+use yii\web\IdentityInterface;
 
 /**
  * This is the model class for table "user".
@@ -19,13 +22,13 @@ use Yii;
  * @property integer $status
  * @property integer $created_at
  * @property integer $updated_at
- *
- * @property Events[] $events
- * @property Post[] $posts
+ * @property string $access_token
  */
-class User extends \yii\db\ActiveRecord
+class User extends ActiveRecord implements IdentityInterface
 {
 
+	const STATUS_DELETED = 0;
+	const STATUS_ACTIVE = 10;
 
 
     /**
@@ -37,7 +40,7 @@ class User extends \yii\db\ActiveRecord
             [['group_id', 'first_name', 'last_name', 'username', 'patronymic', 'auth_key', 'password_hash', 'email', 'created_at', 'updated_at'], 'required'],
             [['group_id', 'status', 'created_at', 'updated_at'], 'integer'],
             [['first_name', 'last_name', 'patronymic', 'username', 'password_hash', 'password_reset_token', 'email'], 'string', 'max' => 255],
-            [['auth_key'], 'string', 'max' => 32],
+            [['auth_key', 'access_token'], 'string', 'max' => 32],
             [['username'], 'unique'],
             [['email'], 'unique'],
             [['password_reset_token'], 'unique'],
@@ -64,6 +67,18 @@ class User extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
+    }
+
+	public function can( $perm ) {
+		$query = new Query();
+		$result = $query
+			->select(['item_name'])
+			->from('auth_assignment')
+			->where(['item_name' => $perm, 'user_id' => $this->id])
+			->one();
+		return $result;
+
+
     }
 
     /**
@@ -121,6 +136,74 @@ class User extends \yii\db\ActiveRecord
         return $this->save();
     }
 
+	public function validatePassword($password)
+	{
+		return Yii::$app->security->validatePassword($password, $this->password_hash);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function findIdentity($id)
+	{
+		return static::findOne(['id' => $id, 'status' => self::STATUS_ACTIVE]);
+	}
+
+	/**
+	 * @inheritdoc
+	 */
+	public static function findIdentityByAccessToken($token, $type = null)
+	{
+		Yii::trace($token);
+		return static::findOne(['access_token' => $token]);
+	}
+
+	/**
+	 * Finds user by username
+	 *
+	 * @param string $username
+	 * @return static|null
+	 */
+	public static function findByUsername($username)
+	{
+		return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+	}
+
+	/**
+	 * Finds user by password reset token
+	 *
+	 * @param string $token password reset token
+	 * @return static|null
+	 */
+	public static function findByPasswordResetToken($token)
+	{
+		if (!static::isPasswordResetTokenValid($token)) {
+			return null;
+		}
+
+		return static::findOne([
+			'password_reset_token' => $token,
+			'status' => self::STATUS_ACTIVE,
+		]);
+	}
+
+	/**
+	 * Finds out if password reset token is valid
+	 *
+	 * @param string $token password reset token
+	 * @return bool
+	 */
+	public static function isPasswordResetTokenValid($token)
+	{
+		if (empty($token)) {
+			return false;
+		}
+
+		$timestamp = (int) substr($token, strrpos($token, '_') + 1);
+		$expire = Yii::$app->params['user.passwordResetTokenExpire'];
+		return $timestamp + $expire >= time();
+	}
+
     /**
      * Removes password reset token
      */
@@ -166,16 +249,16 @@ class User extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getEvents()
+    /*public function getEvents()
     {
         return $this->hasMany(Events::className(), ['user_id' => 'id']);
-    }
+    }*/
 
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getPosts()
+    /*public function getPosts()
     {
         return $this->hasMany(Post::className(), ['author_id' => 'id']);
-    }
+    }*/
 }
