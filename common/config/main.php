@@ -48,7 +48,7 @@ return [
 		            'class' => 'yii\rest\UrlRule',
 		            'controller' => 'v1/event',
 		            'extraPatterns' => [
-						'GET <year:\d+>/<month\d+>/<day:\d+>' => 'index'
+						'GET,OPTIONS <year:\d+>/<month\d+>/<day:\d+>' => 'index'
 		            ],
 		            'pluralize' => false
 	            ],
