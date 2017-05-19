@@ -11,7 +11,7 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'enableStrictParsing' => true,
+            'enableStrictParsing' => false,
             'rules' => [
                 [
                     'class' => 'yii\rest\UrlRule',
@@ -42,6 +42,19 @@ return [
 		            'extraPatterns' => [
 
 		            ],
+		            'pluralize' => false
+	            ],
+	            [
+		            'class' => 'yii\rest\UrlRule',
+		            'controller' => 'v1/event',
+		            'extraPatterns' => [
+						'GET <year:\d+>/<month\d+>' => 'index'
+		            ],
+		            'pluralize' => false
+	            ],
+	            [
+		            'class' => 'yii\rest\UrlRule',
+		            'controller' => 'v1/event-type',
 		            'pluralize' => false
 	            ],
 

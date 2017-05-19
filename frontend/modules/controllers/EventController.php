@@ -2,20 +2,21 @@
 
 namespace frontend\modules\controllers ;
 
+use frontend\modules\models\Events;
+use frontend\modules\models\User;
 use Yii;
-use frontend\modules\models\Event;
-use frontend\modules\models\EventSearch;
+use yii\web\HttpException;
 
 class EventController extends ApiController
 {
-    public $modelClass = 'frontend\models\Event';
+    public $modelClass = 'frontend\modules\models\Events';
 
     public function actions()
     {
         $actions = parent::actions();
 
         // disable the "delete" and "create" actions
-        unset($actions['index'], $actions['create'], $actions['update'], $actions['delete']);
+        unset($actions['index'], $actions['update'], $actions['delete'], $actions['create']);
 
         // customize the data provider preparation with the "prepareDataProvider()" method
         //$actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
@@ -23,63 +24,65 @@ class EventController extends ApiController
         return $actions;
     }
 
-    private function getModels()
-    {
-        $events = Event::find()->asArray()->all();
-        $result = [
-            'byId' => [],
-            'ids' => []
-        ];
-
-        foreach ($events as $event) {
-            $event['start_date'] = strtotime($event['start_date']) * 1000;
-            $event['end_date'] = strtotime($event['end_date']) * 1000;
-
-
-            $result['byId'][$event['event_id']] = $event;
-            $result['ids'][] = (int)$event['event_id'];
-        }
-
-        return $result;
-    }
-
+	/**
+	 * @param $year
+	 * @param $month
+	 *
+	 * @return array|\yii\db\ActiveRecord[]
+	 * @throws HttpException
+	 */
     public function actionIndex($year, $month)
     {
-        $startDate = date("Y-m-d", mktime(0, 0, 0, $month+1, 1, $year));
-        $endDate = date("Y-m-d", mktime(0, 0, 0, $month+2, 0, $year));
+        $startDate = mktime(0, 0, 0, $month+1, 1, $year);
+        $endDate = mktime(0, 0, 0, $month+2, 0, $year);
 
         Yii::trace(json_encode([$startDate, $endDate]));
 
-        return $events = Event::find()
-            ->where([
-                'and',
-                ['>=', 'date', $startDate],
-                ['<=', 'date', $endDate]
-            ])
-            ->all();
+        $token = $this->parseBearerAuthToken();
+
+	    /**
+	     * @var User $user
+	     */
+        $user = User::findIdentityByAccessToken($token);
+
+        if ($user) {
+	        return Events::findByPeriod($startDate, $endDate, $user->id);
+        } else throw new HttpException(404, 'Пользователя не существует');
+
+
     }
 
     public function actionCreate()
     {
-        $model = new Event();
-        $res = Yii::$app->request->post();
+        $model = new Events();
+        //$res = Yii::$app->request->post();
 
-        $res['Event']['start_time'] .= ":00";
-        $res['Event']['end_time'] .= ":00";
-        $res['Event']['user_id'] = Yii::$app->user->id;
+	    $token = $this->parseBearerAuthToken();
 
-        if ($model->load($res) && $model->save()) {
-            return $this->getModels();
+	    /**
+	     * @var User $user
+	     */
+	    $user = User::findIdentityByAccessToken($token);
+
+	    $model->user_id = $user->id;
+
+	    $post = Yii::$app->request->post();
+	    Yii::trace(json_encode($_POST));
+
+        if ($model->load(['Events' => $post]) && $model->save()) {
+            return $model;
         } else {
-            return $res;
+        	Yii::trace(json_encode($model->getErrors()));
+	        throw new HttpException(500, json_encode($model->getErrors()));
         }
     }
 
     public function actionUpdate($id)
     {
-        $model = EventSearch::findOne($id);
+        $model = Events::findOne($id);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+
+        if ($model->load(['Events' => Yii::$app->request->post()]) && $model->save()) {
             return $model;
         } else {
             return false;
@@ -88,12 +91,12 @@ class EventController extends ApiController
 
     public function actionView($id)
     {
-        return EventSearch::findOne($id);
+        return Events::findOne($id);
     }
 
     public function actionDelete($id)
     {
-        EventSearch::findOne($id)->delete();
+	    Events::findOne($id)->delete();
 
         return true;
     }

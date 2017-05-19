@@ -2,15 +2,13 @@
 
 namespace frontend\modules\models;
 
-use Yii;
 
 /**
  * This is the model class for table "event_types".
  *
- * @property integer $e_type_id
- * @property string $type
- *
- * @property Events[] $events
+ * @property integer $id
+ * @property string $name
+ * @property string $color
  */
 class EventTypes extends \yii\db\ActiveRecord
 {
@@ -28,7 +26,9 @@ class EventTypes extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type'], 'string', 'max' => 20],
+            [['name', 'color'], 'required'],
+            [['name'], 'string', 'max' => 40],
+            [['color'], 'string', 'max' => 7],
         ];
     }
 
@@ -38,16 +38,9 @@ class EventTypes extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'e_type_id' => 'E Type ID',
-            'type' => 'Type',
+            'id' => 'ID',
+            'name' => 'Name',
+            'color' => 'Color',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getEvents()
-    {
-        return $this->hasMany(Events::className(), ['e_type_id' => 'e_type_id']);
     }
 }
