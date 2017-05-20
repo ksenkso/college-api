@@ -32,10 +32,11 @@ class Events extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'title', 'timestamp'], 'required'],
+            [['user_id', 'title', 'timestamp', 'reported'], 'required'],
             [['user_id', 'timestamp', 'type_id'], 'integer'],
             [['title'], 'string', 'max' => 40],
             [['description'], 'string', 'max' => 255],
+	        [['reported'], 'boolean']
         ];
     }
 
@@ -50,6 +51,7 @@ class Events extends \yii\db\ActiveRecord
             'title' => 'Title',
             'description' => 'Description',
             'timestamp' => 'Timestamp',
+	        'reported' => 'В отчёте',
             'type_id' => 'Type ID',
         ];
     }
@@ -67,6 +69,21 @@ class Events extends \yii\db\ActiveRecord
 			          ['user_id' => $user_id]
 		          ]
 	          )
+	          ->with(['eventType'])
 	          ->all();
     }
+
+    public function fields() {
+	 $fields =  parent::fields();
+	 $fields['type'] = function($model) {
+	 	return $model->eventType;
+	 };
+
+	 return $fields;
+    }
+
+	public function getEventType()
+	{
+		return $this->hasOne(EventTypes::className(), ['id' => 'type_id']);
+	}
 }
