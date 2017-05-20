@@ -7,11 +7,10 @@ use Yii;
 /**
  * This is the model class for table "group".
  *
- * @property integer $group_id
- * @property string $group_name
+ * @property integer $id
+ * @property string $name
  * @property string $abbreviation
  * @property string $year
- * @property string $group_number
  */
 class Group extends \yii\db\ActiveRecord
 {
@@ -29,10 +28,10 @@ class Group extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['group_name', 'abbreviation', 'year'], 'required'],
-            [['group_name'], 'string', 'max' => 255],
+            [['name', 'abbreviation', 'year'], 'required'],
+            [['name'], 'string', 'max' => 255],
             [['abbreviation'], 'string', 'max' => 10],
-            [['year', 'group_number'], 'string', 'max' => 2],
+            [['year'], 'integer'],
         ];
     }
 
@@ -42,16 +41,10 @@ class Group extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'group_id' => 'Идентификатор группы',
-            'group_name' => 'Название группы',
-            'abbreviation' => 'Аббревиатура',
-            'year' => 'Год поступления',
-            'group_number' => 'Номер группы на курсе',
+            'id' => 'ID',
+            'name' => 'Name',
+            'abbreviation' => 'Abbreviation',
+            'year' => 'Year',
         ];
-    }
-
-    public function getFullAbbreviation()
-    {
-        return $this->abbreviation . " " . $this->year . "." . $this->group_number;
     }
 }
