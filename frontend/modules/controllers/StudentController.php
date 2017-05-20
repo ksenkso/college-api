@@ -9,9 +9,9 @@
 namespace frontend\modules\controllers ;
 
 
-use frontend\modules\models\Students;
-use frontend\modules\models\StudentsSearch;
+use frontend\modules\models\User;
 use Yii;
+use yii\web\UnauthorizedHttpException;
 
 class StudentController extends ApiController
 {
@@ -24,7 +24,7 @@ class StudentController extends ApiController
         $actions = parent::actions();
 
         // disable the "delete" and "create" actions
-        unset($actions['index'], $actions['view']);
+        unset($actions['index'], $actions['view'], $actions['create']);
 
         // customize the data provider preparation with the "prepareDataProvider()" method
         //$actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
@@ -34,19 +34,62 @@ class StudentController extends ApiController
 
     public function actionIndex()
     {
-        $students = Students::find()->asArray()->all();
+    	$auth = Yii::$app->authManager;
+    	$ids = $auth->getUserIdsByRole('student');
 
-        return $students;
+    	if (!count($ids)) {
+    		return [];
+	    }
+
+	    $token = $this->parseBearerAuthToken();
+    	$teacher = User::findIdentityByAccessToken($token);
+
+
+	    return User::find()
+		    ->where([
+		    	'id' => $ids,
+			    'group_id' => $teacher->group_id
+		    ])
+		    ->all();
+
+
+        //$students = Students::find()->asArray()->all();
+
+        //return $students;
     }
 
     public function actionCreate()
     {
-        $model = new Students();
+        $model = new User();
+        $post = Yii::$app->request->post();
+        $token = $this->parseBearerAuthToken();
+        $creator = User::findIdentityByAccessToken($token);
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+	    $username = isset($post['username']) ? $post['username'] : Yii::$app->security->generateRandomString(8);
+	    $password = isset($post['password']) ? $post['password'] : Yii::$app->security->generateRandomString(8);
+
+        if (isset($post['password'])) {
+        	$model->setPassword($password);
+        }
+
+	    if (isset($post['username'])) {
+		    $model->username = $username;
+	    }
+
+        if ($creator->can('admin') && isset($post['group_id'])) {
+	        $model->group_id = $post['group_id'];
+        } else {
+	        $model->group_id = $creator->group_id;
+        }
+
+        if ($model->load(['User' => $post]) && $model->save()) {
+
+        	$auth = Yii::$app->authManager;
+        	$studentRole = $auth->getRole('student');
+        	$auth->assign($studentRole, $model->id);
             return $model;
         } else {
-            return false;
+            return $model->getErrors();
         }
     }
 
