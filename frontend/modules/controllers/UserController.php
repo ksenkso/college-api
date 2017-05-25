@@ -10,10 +10,7 @@ namespace frontend\modules\controllers;
 
 
 use frontend\modules\models\User;
-use frontend\modules\models\UserSearch;
 use Yii;
-use yii\filters\auth\HttpBearerAuth;
-use yii\web\NotFoundHttpException;
 
 class UserController extends ApiController
 {
@@ -25,7 +22,7 @@ class UserController extends ApiController
         $actions = parent::actions();
 
         // disable the "delete" and "create" actions
-        unset($actions['index'], $actions['create'], $actions['view'], $actions['update']);
+        unset($actions['index'], $actions['create'], $actions['view'], $actions['update'], $actions['delete']);
 
         // customize the data provider preparation with the "prepareDataProvider()" method
         //$actions['index']['prepareDataProvider'] = [$this, 'prepareDataProvider'];
@@ -47,6 +44,7 @@ class UserController extends ApiController
                 'created_at',
                 'updated_at',
                 'id'])
+	        ->with('roles')
             ->asArray()
             ->all();
 
@@ -55,13 +53,41 @@ class UserController extends ApiController
 
     public function actionCreate()
     {
-        $model = new User();
+	    $model = new User();
+	    $post = Yii::$app->request->post();
+	    $token = $this->parseBearerAuthToken();
+	    $creator = User::findIdentityByAccessToken($token);
 
-        if ($model->load(Yii::$app->request->post()) && $model->saveUser()) {
-            return $model;
-        } else {
-            return $model->getErrors();
-        }
+	    $username = Yii::$app->security->generateRandomString(8);
+	    $password = Yii::$app->security->generateRandomString(8);
+
+	    $model->setPassword($password);
+	    $model->username = $username;
+
+	    if (isset($post['group_id'])) {
+		    $model->group_id = $post['group_id'];
+	    } else {
+		    $model->group_id = $creator->group_id;
+	    }
+
+	    if ($model->load(['User' => $post]) && $model->save()) {
+
+		    $auth = Yii::$app->authManager;
+		    $roles = $post['roles'];
+
+		    if (count($roles)) {
+			    foreach ( $roles as $role ) {
+				    $auth->assign($auth->getRole($role), $model->id);
+			    }
+		    } else {
+			    $role = $auth->getRole('student');
+			    $auth->assign($role, $model->id);
+		    }
+
+		    return $model;
+	    } else {
+		    return $model->getErrors();
+	    }
     }
 
 	public function actionUpdate($id)
@@ -73,42 +99,49 @@ class UserController extends ApiController
 
         $model = User::find()->where(['id' => $id])->one();
 
-        if (!$model) {
-	        throw new NotFoundHttpException('User with such id not found');
-        }
+	    $post = Yii::$app->request->post();
 
-        $arr = User::find()->where(['id' => $id])->asArray()->one();
-        $ph = $model->password_hash;
+	    if ($model->load(['User' => $post]) && $model->save()) {
 
-        $post = Yii::$app->request->post();
-        Yii::trace(json_encode($post));
-        Yii::trace(json_encode($arr));
+		    $auth = Yii::$app->authManager;
+		    $roles = $post['roles'];
 
-        if ($model->load($post)) {
-            Yii::trace('loaded');
+		    if (count($roles)) {
 
-	        return $model->updateUser( $ph ) ? $model : $model->getErrors();
+		    	$auth->revokeAll($model->id);
 
-        } else {
-            Yii::trace('failed to load');
-            return $model->getErrors();
-        }
+			    foreach ( $roles as $role ) {
+
+				    $auth->assign($auth->getRole($role), $model->id);
+			    }
+		    } else {
+
+			    $auth->revokeAll($model->id);
+		    }
+
+		    return $model;
+	    } else {
+		    return $model->getErrors();
+	    }
     }
 
     public function actionView($id)
     {
         return User::find()
-            ->select('username,first_name,last_name,patronymic,status,email,group_id,created_at,updated_at,id')
+            ->select('username,first_name,last_name,patronymic,status,email,group_id,created_at,updated_at,id,address,phone')
             ->where(['id' => $id])
+	        ->with('roles')
             ->asArray()
             ->one();
     }
 
     public function actionDelete($id)
     {
-        UserSearch::findOne($id)->delete();
+        User::findOne($id)->delete();
 
         return true;
     }
+
+
 
 }

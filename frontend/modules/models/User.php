@@ -39,11 +39,12 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             [['group_id', 'first_name', 'last_name', 'username', 'patronymic', 'auth_key', 'password_hash', 'email', 'created_at', 'updated_at'], 'required'],
             [['group_id', 'status', 'created_at', 'updated_at'], 'integer'],
-            [['first_name', 'last_name', 'patronymic', 'username', 'password_hash', 'password_reset_token', 'email'], 'string', 'max' => 255],
+            [['first_name', 'last_name', 'patronymic', 'username', 'password_hash', 'password_reset_token', 'email', 'address'], 'string', 'max' => 255],
             [['auth_key', 'access_token'], 'string', 'max' => 32],
             [['username'], 'unique'],
             [['email'], 'unique'],
             [['password_reset_token'], 'unique'],
+	        [['phone'], 'string', 'max' => 20],
             [['id'], 'safe']
         ];
     }
@@ -262,6 +263,10 @@ class User extends ActiveRecord implements IdentityInterface
     public static function tableName()
     {
         return 'user';
+    }
+
+	public function getRoles() {
+		return $this->hasMany(AuthAssignment::className(), ['user_id' => 'id']);
     }
 
     /**

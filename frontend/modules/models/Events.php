@@ -2,8 +2,6 @@
 
 namespace frontend\modules\models;
 
-use Yii;
-
 /**
  * This is the model class for table "events".
  *
@@ -13,10 +11,15 @@ use Yii;
  * @property string $description
  * @property integer $timestamp
  * @property integer $type_id
+ * @property integer $report_type
+ * @property string $results
+ * @property string $responsible
  */
 class Events extends \yii\db\ActiveRecord
 {
 
+	const DOCUMENT_ANALYSIS = 1;
+	const DOCUMENT_DIARY = 2;
 
 	/**
      * @inheritdoc
@@ -34,9 +37,11 @@ class Events extends \yii\db\ActiveRecord
         return [
             [['user_id', 'title', 'timestamp', 'reported'], 'required'],
             [['user_id', 'timestamp', 'type_id'], 'integer'],
-            [['title'], 'string', 'max' => 40],
-            [['description'], 'string', 'max' => 255],
-	        [['reported'], 'boolean']
+            [['title', 'form'], 'string', 'max' => 40],
+            [['description', 'responsible'], 'string', 'max' => 255],
+	        [['results'], 'string', 'max' => 5],
+	        [['reported'], 'boolean'],
+	        [['report_type'], 'integer']
         ];
     }
 

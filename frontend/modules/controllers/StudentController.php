@@ -11,11 +11,10 @@ namespace frontend\modules\controllers ;
 
 use frontend\modules\models\User;
 use Yii;
-use yii\web\UnauthorizedHttpException;
 
 class StudentController extends ApiController
 {
-    public $modelClass = 'frontend\modules\models\Students';
+    public $modelClass = 'frontend\modules\models\User';
 
 
 
@@ -50,6 +49,7 @@ class StudentController extends ApiController
 		    	'id' => $ids,
 			    'group_id' => $teacher->group_id
 		    ])
+		    ->asArray()
 		    ->all();
 
 
@@ -65,16 +65,11 @@ class StudentController extends ApiController
         $token = $this->parseBearerAuthToken();
         $creator = User::findIdentityByAccessToken($token);
 
-	    $username = isset($post['username']) ? $post['username'] : Yii::$app->security->generateRandomString(8);
-	    $password = isset($post['password']) ? $post['password'] : Yii::$app->security->generateRandomString(8);
+	    $username = Yii::$app->security->generateRandomString(8);
+	    $password = Yii::$app->security->generateRandomString(8);
 
-        if (isset($post['password'])) {
-        	$model->setPassword($password);
-        }
-
-	    if (isset($post['username'])) {
-		    $model->username = $username;
-	    }
+	    $model->setPassword($password);
+	    $model->username = $username;
 
         if ($creator->can('admin') && isset($post['group_id'])) {
 	        $model->group_id = $post['group_id'];
@@ -95,7 +90,7 @@ class StudentController extends ApiController
 
     public function actionUpdate($id)
     {
-        $model = StudentsSearch::findOne($id);
+        $model = User::findOne($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $model;
@@ -106,12 +101,18 @@ class StudentController extends ApiController
 
     public function actionView($id)
     {
-        return StudentsSearch::findOne($id);
+	    return User::find()
+		    ->select(['first_name', 'last_name', 'patronymic', 'email', 'group_id', 'username', 'id', 'address', 'phone'])
+	               ->where([
+		               'id' => $id,
+	               ])
+	               ->asArray()
+	               ->one();
     }
 
     public function actionDelete($id)
     {
-        StudentsSearch::findOne($id)->delete();
+        User::findOne($id)->delete();
 
         return true;
     }

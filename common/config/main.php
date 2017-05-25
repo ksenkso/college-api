@@ -57,6 +57,14 @@ return [
 		            'controller' => 'v1/event-type',
 		            'pluralize' => false
 	            ],
+	            [
+		            'class' => 'yii\rest\UrlRule',
+		            'controller' => 'v1/document',
+		            'pluralize' => false,
+		            'extraPatterns' => [
+			            'GET,OPTIONS <type_id:\d+>' => 'view'
+		            ]
+	            ],
 
 
 

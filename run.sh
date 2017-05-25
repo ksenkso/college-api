@@ -35,7 +35,6 @@ fi;
 cp common.main-local.php common/config/main-local.php
 
 #mv /app/vendor/bower-asset bower
-
 find /app/backend/runtime -type d -print0 | xargs -0 chmod 777
 # find /app/common/runtime -type d -print0 | xargs -0 chmod 777
 find /app/frontend/runtime -type d -print0 | xargs -0 chmod 777
