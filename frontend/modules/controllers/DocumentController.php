@@ -10,9 +10,13 @@ namespace frontend\modules\controllers ;
 
 use frontend\modules\models\Events;
 use frontend\modules\models\Group;
+use frontend\modules\models\Portfolio;
 use frontend\modules\models\User;
+use PhpOffice\PhpWord\Element\Table;
+use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\Reader\Word2007;
 use PhpOffice\PhpWord\Style\Font;
 use PhpOffice\PhpWord\TemplateProcessor;
 use yii\base\InvalidParamException;
@@ -143,37 +147,109 @@ class DocumentController extends ApiController
 
 	}
 
-	public function actionIndex() {
+	private function readDoc() {
+
+		/**
+		 * @var Word2007 $reader
+		 */
+		$res = [];
+		$reader = IOFactory::createReader();
+		$phpWord = $reader->load(\Yii::getAlias('@app') . '/templates/tpl_analysis.docx');
+		$sections = $phpWord->getSections();
+		foreach ( $sections as $section ) {
+
+			$elements = $section->getElements();
+			$res[$section->getSectionId()] = $elements;
+		}
+
+		return $res;
+
 
 	}
 
-	public function actionView($type_id) {
+	public function actionIndex() {
+
+		/*$res = [];
+
+
+		$reader = IOFactory::createReader();
+		$phpWord = $reader->load(\Yii::getAlias('@app') . '/templates/tpl_test.docx');
+		$sections = $phpWord->getSections();
+
+		foreach ( $sections as $section ) {
+
+			$elements = $section->getElements();
+
+			foreach ( $elements as $element ) {
+				if ($element instanceof Table) {
+
+					$rows = $element->getRows();
+					foreach ( $rows as $rowIndex => $row ) {
+						$cells = $row->getCells();
+						foreach ( $cells as $cell ) {
+							$innerElements = $cell->getElements();
+							foreach ( $innerElements as $item ) {
+								if ($item instanceof \PhpOffice\PhpWord\Element\Text) {
+									$res[$rowIndex][] = $item->getText();
+								}
+							}
+						}
+					}
+				}
+			}
+			//$res[$section->getSectionId()] = $elements;
+		}*/
+
+		// return $res;
+
+		return Portfolio::processPortfolio(3);
+	}
+
+	public function actionView($type_id, $user_id = null) {
 
 		$token = $this->parseBearerAuthToken();
 		$teacher = User::findIdentityByAccessToken($token);
 
-		$filename = NULL;
+		if ($teacher) {
 
-		switch ($type_id) {
-			case Events::DOCUMENT_ANALYSIS: {
-				$filename = $this->processAnalysis($teacher);
+			$filename = NULL;
+
+			if ($user_id) {
+				$filename = Portfolio::processPortfolio($user_id);
 
 				\Yii::trace($filename);
-				break;
+
+				\Yii::$app->response->sendFile($filename, $filename);
+				unlink($filename);
+
+				return;
 			}
-			case Events::DOCUMENT_DIARY: {
-				$filename = $this->processDiary($teacher);
-				break;
+
+
+
+			switch ($type_id) {
+				case Events::DOCUMENT_ANALYSIS: {
+					$filename = $this->processAnalysis($teacher);
+
+					\Yii::trace($filename);
+					break;
+				}
+				case Events::DOCUMENT_DIARY: {
+					$filename = $this->processDiary($teacher);
+					break;
+				}
+				default: {
+					throw new InvalidParamException('Invalid type of document');
+				}
 			}
-			default: {
-				throw new InvalidParamException('Invalid type of document');
-			}
+
+			\Yii::$app->response->sendFile($filename, $filename);
+			unlink($filename);
+
+			return;
 		}
 
-		\Yii::$app->response->sendFile($filename, $filename);
-		unlink($filename);
 
-		return;
 
 
 	}

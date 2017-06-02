@@ -269,19 +269,5 @@ class User extends ActiveRecord implements IdentityInterface
 		return $this->hasMany(AuthAssignment::className(), ['user_id' => 'id']);
     }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    /*public function getEvents()
-    {
-        return $this->hasMany(Events::className(), ['user_id' => 'id']);
-    }*/
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    /*public function getPosts()
-    {
-        return $this->hasMany(Post::className(), ['author_id' => 'id']);
-    }*/
 }

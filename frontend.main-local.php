@@ -7,10 +7,12 @@ $config = [
             'cookieValidationKey' => '27Q1txyVwLfYTpcKNj8YE6Jz251fM4f5',
             'parsers' => [
 	            'application/json' => 'yii\web\JsonParser',
+	            'multipart/form-data' => 'yii\web\MultipartFormDataParser'
             ]
         ],
     ],
 ];
+
 
 if (!YII_ENV_TEST) {
     // configuration adjustments for 'dev' environment

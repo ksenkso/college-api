@@ -62,11 +62,28 @@ return [
 		            'controller' => 'v1/document',
 		            'pluralize' => false,
 		            'extraPatterns' => [
-			            'GET,OPTIONS <type_id:\d+>' => 'view'
+			            'GET,OPTIONS <type_id:\d+>/<user_id:\d+>' => 'view',
+			            'GET,OPTIONS <type_id:\d+>' => 'view',
 		            ]
 	            ],
-
-
+	            [
+		            'class' => 'yii\rest\UrlRule',
+		            'controller' => 'v1/portfolio',
+		            'pluralize' => false,
+		            'extraPatterns' => [
+			            'GET,OPTIONS <user_id:\d+>/<type_id:\d+>' => 'view',
+			            'POST,OPTIONS upload/<user_id:\d+>' => 'upload',
+		            ]
+	            ],
+	            [
+		            'class' => 'yii\rest\UrlRule',
+		            'controller' => 'v1/attachment',
+		            'pluralize' => false,
+		            'extraPatterns' => [
+			            'GET,OPTIONS <user_id:\d+>/<type_id:\d+>' => 'view',
+			            'POST,OPTIONS <user_id:\d+>/<type:\d+>' => 'create',
+		            ]
+	            ],
 
             ],
         ],
