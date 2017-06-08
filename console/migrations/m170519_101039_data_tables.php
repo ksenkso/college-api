@@ -231,10 +231,10 @@ class m170519_101039_data_tables extends Migration
     	$this->insert(
     		'group',
 		    [
-		    	1,
-			    '',
-			    getenv('ADMIN_GROUP'),
-			    ''
+		    	'id' => 1,
+			    'name' => '',
+			    'abbreviation' => getenv('ADMIN_GROUP'),
+			    'year' => '',
 		    ]
 	    );
 
