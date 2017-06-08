@@ -152,7 +152,6 @@ class m170519_101039_data_tables extends Migration
 			    'meta_value' => $this->string(1500)->notNull()
 		    ]
 	    );
-
     }
 
     public function down()
