@@ -33,6 +33,7 @@ if [ -d /app/vendor/bower-asset ]; then
 fi;
 
 cp common.main-local.php common/config/main-local.php
+php yii migrate --interactive=0
 
 #mv /app/vendor/bower-asset bower
 find /app/backend/runtime -type d -print0 | xargs -0 chmod 777

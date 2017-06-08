@@ -1,15 +1,16 @@
 <?php
-
-$host = getenv('MYSQL_HOST') or 'localhost';
+$user = getenv('MYSQL_USER');
+$host = getenv('MYSQL_HOST');
+$pass = getenv('MYSQL_PASSWORD');
+$pass = $host === 'localhost' ? '' : $pass;
 $dbname = getenv('MYSQL_DBNAME') ? getenv('MYSQL_DBNAME') : 'u1470_journal';
-$pass = $host === 'localhost' ? '' : '812KKKlm102';
 
 return [
     'components' => [
         'db' => [
             'class' => 'yii\db\Connection',
             'dsn' => "mysql:host=$host;dbname=$dbname",
-            'username' => 'root',
+            'username' => $user,
             'password' => $pass,
             'charset' => 'utf8',
         ],
