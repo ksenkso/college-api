@@ -50,13 +50,14 @@ class m170519_101039_data_tables extends Migration
 		    ]
 	    );
 
-    	$this->insert(
+    	$this->batchInsert(
     		'event_types',
+		    ['name', 'color'],
 		    [
-		    	['name' => 'Спортивное','color' => '#def'],
-			    ['name' => 'Культурное','color' => '#ac4'],
-			    ['name' => 'Встреча с психологом','color' => '#e0af98'],
-			    ['name' => 'Встреча с родителями','color' => '#989ae0'],
+		    	['Спортивное', '#def'],
+			    ['Культурное', '#ac4'],
+			    ['Встреча с психологом', '#e0af98'],
+			    ['Встреча с родителями', '#989ae0'],
 		    ]
 	    );
 
