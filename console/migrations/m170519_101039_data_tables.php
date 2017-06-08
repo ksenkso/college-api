@@ -6,10 +6,6 @@ class m170519_101039_data_tables extends Migration
 {
     public function up()
     {
-    	$this->dropTable('events');
-    	$this->dropTable('attachments');
-    	$this->dropTable('document_types');
-    	$this->dropTable('event_types');
 
     	$this->createTable(
     		'events',
