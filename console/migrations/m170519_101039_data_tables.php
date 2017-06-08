@@ -136,12 +136,12 @@ class m170519_101039_data_tables extends Migration
 	    );
 
     	$this->addColumn('user', 'group_id', 'int(11) not null');
-    	$this->addColumn('user', 'access_token', 'int(11) not null');
-    	$this->addColumn('user', 'first_name', 'varchar(255) null');
-    	$this->addColumn('user', 'last_name', 'varchar(255) null');
-    	$this->addColumn('user', 'patronymic', 'varchar(255) null');
-    	$this->addColumn('user', 'phone', 'varchar(20) null');
-    	$this->addColumn('user', 'address', 'varchar(255) null');
+	    $this->addColumn('user', 'first_name', 'varchar(255) null');
+	    $this->addColumn('user', 'last_name', 'varchar(255) null');
+	    $this->addColumn('user', 'patronymic', 'varchar(255) null');
+	    $this->addColumn('user', 'access_token', 'int(11) not null');
+	    $this->addColumn('user', 'address', 'varchar(255) null');
+	    $this->addColumn('user', 'phone', 'varchar(20) null');
     	$this->addColumn('user', 'sex', 'varchar(3) null');
     	$this->addColumn('user', 'birth_date', 'int(11) null');
 
