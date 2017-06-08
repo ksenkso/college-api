@@ -33,6 +33,7 @@ if [ -d /app/vendor/bower-asset ]; then
 fi;
 
 cp common.main-local.php common/config/main-local.php
+php yii migrate --migrationPath=@yii/rbac/migrations
 php yii migrate --interactive=0
 
 #mv /app/vendor/bower-asset bower
