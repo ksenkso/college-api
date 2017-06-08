@@ -24,6 +24,77 @@ class EventController extends ApiController
         return $actions;
     }
 
+	public function actionBatch() {
+		$request = \Yii::$app->request->post();
+
+		$create = $request['create'];
+		$update = $request['update'];
+		$delete = $request['delete'];
+
+		if (count($create)) {
+			foreach ( $create as $item ) {
+
+				$model = new Events();
+				$model->load(['Events' => $item]);
+				if (!$model->save()) {
+					return $model->getErrors();
+				}
+			}
+		}
+
+		if (count($update)) {
+			foreach ( $update as $item ) {
+
+				$model = Events::findOne($item['id']);
+				unset($item['id']);
+				$model->load(['Events' => $item]);
+				if (!$model->save()) {
+					return $model->getErrors();
+				}
+			}
+		}
+
+		if (count($delete)) {
+			foreach ( $delete as $id ) {
+
+				Events::findOne($id)->delete();
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param $type
+	 *
+	 * @return array|\yii\db\ActiveRecord[]
+	 * @throws HttpException
+	 */
+	public function actionByType( $type ) {
+
+		$token = $this->parseBearerAuthToken();
+
+		/**
+		 * @var User $user
+		 */
+		$user = User::findIdentityByAccessToken($token);
+
+		if ($user) {
+
+			$query = Events::find()->where(['type_id' => $type, 'user_id' => $user->id])->orderBy('timestamp');
+
+			$request = Yii::$app->request;
+			if ($limit = $request->headers->get('X-Limit')) {
+				$query->limit($limit);
+			}
+
+
+			return $query->all();
+		} else throw new HttpException(404, 'Пользователя не существует');
+
+
+    }
+
 	/**
 	 * @param $year
 	 * @param $month

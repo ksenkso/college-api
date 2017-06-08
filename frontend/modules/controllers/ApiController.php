@@ -51,7 +51,7 @@ class ApiController extends ActiveController {
 				// Allow OPTIONS caching
 				'Access-Control-Max-Age'           => 3600,
 				// Allow the X-Pagination-Current-Page header to be exposed to the browser.
-				'Access-Control-Expose-Headers'    => [ 'X-Pagination-Current-Page', 'Content-Disposition' ],
+				'Access-Control-Expose-Headers'    => [ 'X-Pagination-Current-Page', 'Content-Disposition', 'X-Limit' ],
 			]
 		];
 
@@ -119,6 +119,9 @@ class ApiController extends ActiveController {
 		Yii::$app->getResponse()->getHeaders()->set('Allow', implode(',', $options));
 		Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Methods', implode(',', $options));
 		Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Origin', 'http://journal.ru');
-		Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Headers', join(',', ['X-Token', 'Authorization', 'Content-Type', 'Content-Length']));
+		Yii::$app->getResponse()->getHeaders()->set(
+			'Access-Control-Allow-Headers',
+			join(',', ['X-Token', 'Authorization', 'Content-Type', 'Content-Length', 'X-Limit'])
+		);
 	}
 }

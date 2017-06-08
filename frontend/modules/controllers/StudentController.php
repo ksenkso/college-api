@@ -102,7 +102,7 @@ class StudentController extends ApiController
     public function actionView($id)
     {
 	    return User::find()
-		    ->select(['first_name', 'last_name', 'patronymic', 'email', 'group_id', 'username', 'id', 'address', 'phone'])
+		    ->select(['first_name', 'last_name', 'patronymic', 'email', 'group_id', 'username', 'id', 'address', 'phone', 'sex', 'birth_date'])
 	               ->where([
 		               'id' => $id,
 	               ])

@@ -13,6 +13,18 @@ return [
             'showScriptName' => false,
             'enableStrictParsing' => false,
             'rules' => [
+	            [
+		            'class' => 'yii\rest\UrlRule',
+		            'controller' => 'v1/user-meta',
+		            'pluralize' => false,
+		            'extraPatterns' => [
+		            	'GET,OPTIONS by-type/<type:\d+>' => 'by-type',
+			            'GET,OPTIONS by-type/<type:\d+>/<user_id:\d+>' => 'by-type',
+			            'GET,OPTIONS <user_id:\d+>' => 'view',
+		            	'POST,OPTIONS batch' => 'batch',
+
+		            ],
+	            ],
                 [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'v1/user',
@@ -48,7 +60,9 @@ return [
 		            'class' => 'yii\rest\UrlRule',
 		            'controller' => 'v1/event',
 		            'extraPatterns' => [
-						'GET,OPTIONS <year:\d+>/<month\d+>/<day:\d+>' => 'index'
+						'GET,OPTIONS <year:\d+>/<month\d+>/<day:\d+>' => 'index',
+						'GET,OPTIONS by-type/<type:\d+>' => 'by-type',
+						'POST,OPTIONS batch' => 'batch',
 		            ],
 		            'pluralize' => false
 	            ],
@@ -84,7 +98,11 @@ return [
 			            'POST,OPTIONS <user_id:\d+>/<type:\d+>' => 'create',
 		            ]
 	            ],
-
+	            [
+		            'class' => 'yii\rest\UrlRule',
+		            'controller' => 'v1/protocol',
+		            'pluralize' => false
+	            ],
             ],
         ],
     ],

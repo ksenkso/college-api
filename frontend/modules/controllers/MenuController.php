@@ -45,6 +45,7 @@ class MenuController extends ApiController
     {
         $menu = [
             'dashboard' => ['title' => 'Главная', 'path' => ''],
+            'cabinet' => ['title' => 'Кабинет', 'path' => 'cabinet'],
             'calendar' => ['title' => 'Календарь', 'path' => 'calendar'],
             'students' => ['title' => 'Студенты', 'path' => 'students'],
             'groups' => ['title' => 'Группы', 'path' => 'groups'],
@@ -52,7 +53,7 @@ class MenuController extends ApiController
             'documents' => ['title' => 'Документы', 'path' => 'documents'],
             'hours' => ['title' => 'Посещаемость', 'path' => 'hours'],
 	        'journal' => ['title' => 'Журнал', 'external' => true, 'path' => 'http://' . (getenv('JOURNAL_DOAMIN') ? getenv('JOURNAL_DOAMIN') : 'journal.' . str_replace('api.','',getenv('VIRTUAL_HOST')))],
-	        'portfolio' => ['title' => 'Портфолио', 'path' => 'portfolio']
+	        'portfolio' => ['title' => 'Портфолио', 'path' => 'portfolio'],
         ];
 
         $token = $this->parseBearerAuthToken();
@@ -63,6 +64,7 @@ class MenuController extends ApiController
 			        return [
 				        $menu['dashboard'],
 				        $menu['calendar'],
+				        $menu['cabinet'],
 				        $menu['students'],
 				        $menu['documents'],
 				        $menu['groups'],
@@ -76,6 +78,7 @@ class MenuController extends ApiController
 		        if ($user->can('teacher')) {
 			        return [
 				        $menu['dashboard'],
+				        $menu['cabinet'],
 				        $menu['calendar'],
 				        $menu['students'],
 				        $menu['documents'],

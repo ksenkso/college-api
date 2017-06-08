@@ -23,6 +23,8 @@ use yii\web\IdentityInterface;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $access_token
+ * @property string $sex
+ * @property integer $birth_date
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -38,9 +40,10 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return [
             [['group_id', 'first_name', 'last_name', 'username', 'patronymic', 'auth_key', 'password_hash', 'email', 'created_at', 'updated_at'], 'required'],
-            [['group_id', 'status', 'created_at', 'updated_at'], 'integer'],
+            [['group_id', 'status', 'created_at', 'updated_at', 'birth_date'], 'integer'],
             [['first_name', 'last_name', 'patronymic', 'username', 'password_hash', 'password_reset_token', 'email', 'address'], 'string', 'max' => 255],
             [['auth_key', 'access_token'], 'string', 'max' => 32],
+	        [['sex'], 'string', 'max' => 3],
             [['username'], 'unique'],
             [['email'], 'unique'],
             [['password_reset_token'], 'unique'],
@@ -269,5 +272,34 @@ class User extends ActiveRecord implements IdentityInterface
 		return $this->hasMany(AuthAssignment::className(), ['user_id' => 'id']);
     }
 
+	public function getMetaEmployments() {
+
+    	return $this->hasMany(UserMeta::className(), ['user_id' => 'id'])->andWhere(['in', 'meta_key', UserMeta::META_EMPLOYMENT]);
+	}
+
+	public function getMetaOutEmployments() {
+
+		return $this->hasMany(UserMeta::className(), ['user_id' => 'id'])->andWhere(['in', 'meta_key', UserMeta::META_OUT_EMPLOYMENT]);
+	}
+
+	public function getMetaHealths() {
+
+		return $this->hasMany(UserMeta::className(), ['user_id' => 'id'])->andWhere(['in', 'meta_key', UserMeta::META_HEALTH]);
+	}
+
+	public function getMetaPersonal() {
+
+		return $this->hasMany(UserMeta::className(), ['user_id' => 'id'])->andWhere(['in', 'meta_key', UserMeta::META_PERSONAL]);
+	}
+
+	public function getMetaParents() {
+
+		return $this->hasMany(UserMeta::className(), ['user_id' => 'id'])->andWhere(['in', 'meta_key', UserMeta::META_PARENTS]);
+	}
+
+	public function getMetaBreeding() {
+
+		return $this->hasMany(UserMeta::className(), ['user_id' => 'id'])->andWhere(['in', 'meta_key', UserMeta::META_BREEDING]);
+	}
 
 }

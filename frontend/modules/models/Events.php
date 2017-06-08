@@ -20,6 +20,14 @@ class Events extends \yii\db\ActiveRecord
 
 	const DOCUMENT_ANALYSIS = 1;
 	const DOCUMENT_DIARY = 2;
+	const DOCUMENT_PLAN = 3;
+	const DOCUMENT_PARENTS = 4;
+
+	const EVENT_ACTIVITY = 10;
+	const EVENT_VISIT = 11;
+	const EVENT_PSYCHOLOGIST = 12;
+	const EVENT_PARENT_MEET = 13;
+
 
 	/**
      * @inheritdoc
@@ -38,8 +46,7 @@ class Events extends \yii\db\ActiveRecord
             [['user_id', 'title', 'timestamp', 'reported'], 'required'],
             [['user_id', 'timestamp', 'type_id'], 'integer'],
             [['title', 'form'], 'string', 'max' => 40],
-            [['description', 'responsible'], 'string', 'max' => 255],
-	        [['results'], 'string', 'max' => 5],
+            [['description', 'responsible', 'results'], 'string', 'max' => 255],
 	        [['reported'], 'boolean'],
 	        [['report_type'], 'integer']
         ];
