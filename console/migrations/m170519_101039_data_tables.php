@@ -61,6 +61,8 @@ class m170519_101039_data_tables extends Migration
 		    ]
 	    );
 
+
+
     	$this->createTable(
     		'family',
 		    [
@@ -134,6 +136,7 @@ class m170519_101039_data_tables extends Migration
 	    );
 
     	$this->addColumn('user', 'group_id', 'int(11) not null');
+    	$this->addColumn('user', 'access_token', 'int(11) not null');
     	$this->addColumn('user', 'first_name', 'varchar(255) null');
     	$this->addColumn('user', 'last_name', 'varchar(255) null');
     	$this->addColumn('user', 'patronymic', 'varchar(255) null');
@@ -141,6 +144,69 @@ class m170519_101039_data_tables extends Migration
     	$this->addColumn('user', 'address', 'varchar(255) null');
     	$this->addColumn('user', 'sex', 'varchar(3) null');
     	$this->addColumn('user', 'birth_date', 'int(11) null');
+
+    	$this->batchInsert(
+    		'user',
+		    ['id',
+			    'username',
+			    'auth_key',
+			    'password_hash',
+			    'password_reset_token',
+			    'email',
+			    'status',
+			    'created_at',
+			    'updated_at',
+			    'group_id',
+			    'first_name',
+			    'last_name',
+			    'patronymic',
+			    'access_token',
+			    'address',
+			    'phone',
+			    'sex',
+			    'birth_date'],
+		    [
+				['admin','8oEuzmQg974WnRPNY5n0An_oHoZrRMLN','$2y$13$TZeiuALMqyS7wgksa8068u2Mem6nJ/iRB4KnujdGmNkwm8/Nk4ghy','8YiUsybdkBCfIteMC2EMoy_3uu3pSWPs','admin@localhost',10,1495142241,1495142241,1,'system','admin','S','hjyUDZcGTfdSeEUaKuT8Q3rQ-xfnYuGc',NULL,NULL,'',0]
+		    ]
+	    );
+    	$this->batchInsert(
+    		'auth_item',
+		    ['name', 'type', 'description', 'rule_name', 'data', 'created_at', 'updated_at'],
+		    [
+			    ['admin',1,'Администратор',NULL,NULL,1495142075,1495142075],
+			    ['navCabinet',2,'Navigate to Cabinet',NULL,NULL,1495142075,1495142075],
+			    ['navCalendar',2,'Navigate to Calendar',NULL,NULL,1495142075,1495142075],
+			    ['navDashboard',2,'Navigate to Dashboard',NULL,NULL,1495142075,1495142075],
+			    ['navDocuments',2,'Navigate to Documents',NULL,NULL,1495142075,1495142075],
+			    ['navGroups',2,'Navigate to Groups',NULL,NULL,1495142075,1495142075],
+			    ['navPortfolio',2,'Navigate to Portfolio',NULL,NULL,1495142075,1495142075],
+			    ['navStudents',2,'Navigate to Students',NULL,NULL,1495142075,1495142075],
+			    ['navUsers',2,'Navigate to Users',NULL,NULL,1495142075,1495142075],
+			    ['steward',1,'Стаорста',NULL,NULL,1495142075,1495142075],
+			    ['student',1,'Студент',NULL,NULL,1495142075,1495142075],
+			    ['teacher',1,'Учитель',NULL,NULL,1495142075,149514207]
+
+		    ]
+	    );
+    	$this->batchInsert(
+    		'auth_item_child',
+		    ['parent', 'child'],
+		    [
+			    ['steward','navCabinet'],
+			    ['teacher','navCabinet'],
+			    ['teacher','navCalendar'],
+			    ['admin','navDashboard'],
+			    ['student','navDashboard'],
+			    ['teacher','navDashboard'],
+			    ['teacher','navDocuments'],
+			    ['admin','navGroups'],
+			    ['steward','navPortfolio'],
+			    ['teacher','navPortfolio'],
+			    ['teacher','navStudents'],
+			    ['admin','navUsers'],
+			    ['admin','teacher']
+		    ]
+	    );
 
     	$this->createTable(
     		'user_meta',
