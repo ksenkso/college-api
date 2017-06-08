@@ -147,7 +147,8 @@ class m170519_101039_data_tables extends Migration
 
     	$this->batchInsert(
     		'user',
-		    ['id',
+		    [
+		    	'id',
 			    'username',
 			    'auth_key',
 			    'password_hash',
@@ -166,7 +167,26 @@ class m170519_101039_data_tables extends Migration
 			    'sex',
 			    'birth_date'],
 		    [
-				['admin','8oEuzmQg974WnRPNY5n0An_oHoZrRMLN','$2y$13$TZeiuALMqyS7wgksa8068u2Mem6nJ/iRB4KnujdGmNkwm8/Nk4ghy','8YiUsybdkBCfIteMC2EMoy_3uu3pSWPs','admin@localhost',10,1495142241,1495142241,1,'system','admin','S','hjyUDZcGTfdSeEUaKuT8Q3rQ-xfnYuGc',NULL,NULL,'',0]
+				[
+					1,
+					'admin',
+					'8oEuzmQg974WnRPNY5n0An_oHoZrRMLN',
+					Yii::$app->security->generatePasswordHash(getenv('ADMIN_PASSWORD')),
+					'8YiUsybdkBCfIteMC2EMoy_3uu3pSWPs',
+					'admin@localhost',
+					10,
+					1495142241,
+					1495142241,
+					1,
+					'system',
+					'admin',
+					'S',
+					'hjyUDZcGTfdSeEUaKuT8Q3rQ-xfnYuGc',
+					NULL,
+					NULL,
+					'',
+					0
+				]
 		    ]
 	    );
     	$this->batchInsert(
@@ -205,30 +225,6 @@ class m170519_101039_data_tables extends Migration
 			    ['teacher','navStudents'],
 			    ['admin','navUsers'],
 			    ['admin','teacher']
-		    ]
-	    );
-
-    	$this->insert(
-    		'user',
-		    [
-		    	1,
-		    	'admin',
-			    '8oEuzmQg974WnRPNY5n0An_oHoZrRMLN',
-			    Yii::$app->security->generatePasswordHash(getenv('ADMIN_PASSWORD')),
-			    '8YiUsybdkBCfIteMC2EMoy_3uu3pSWPs',
-			    'admin@localhost',
-			    10,
-			    1495142241,
-			    1495142241,
-			    1,
-			    'system',
-			    'admin',
-			    'S',
-			    'hjyUDZcGTfdSeEUaKuT8Q3rQ-xfnYuGc',
-			    NULL,
-			    NULL,
-			    '',
-			    0
 		    ]
 	    );
 
