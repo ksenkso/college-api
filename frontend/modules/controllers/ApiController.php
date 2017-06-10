@@ -118,7 +118,7 @@ class ApiController extends ActiveController {
 		$options = ['GET', 'HEAD', 'POST','OPTIONS', 'PUT', 'DELETE'];
 		Yii::$app->getResponse()->getHeaders()->set('Allow', implode(',', $options));
 		Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Methods', implode(',', $options));
-		Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Origin', 'http://journal.ru');
+		Yii::$app->getResponse()->getHeaders()->set('Access-Control-Allow-Origin', '*');
 		Yii::$app->getResponse()->getHeaders()->set(
 			'Access-Control-Allow-Headers',
 			join(',', ['X-Token', 'Authorization', 'Content-Type', 'Content-Length', 'X-Limit'])
