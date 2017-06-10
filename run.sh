@@ -45,6 +45,8 @@ find /app/backend/runtime -type f -print0 | xargs -0 chmod 666
 # find /app/common/web/assets -type d -print0 | xargs -0 chmod 777
 find /app/frontend/web/assets -type f -print0 | xargs -0 chmod 666
 
+cp frontend.main-local.php frontend/config/main-local.php
+
 # start PHP and nginx
 service php5-fpm start
 /usr/sbin/nginx
