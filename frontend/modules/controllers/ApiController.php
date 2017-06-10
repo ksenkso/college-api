@@ -43,7 +43,7 @@ class ApiController extends ActiveController {
 			'class' => Cors::className(),
 			'cors'  => [
 				// restrict access to
-				'Origin'      => [ 'http://journal.ru' ],
+				'Origin'      => [ Yii::$app->request->headers->get('Origin') ],
 				// Allow only POST and PUT methods
 				'Access-Control-Request-Headers'   => [ '*' ],
 				// Allow only headers 'X-Wsse'
