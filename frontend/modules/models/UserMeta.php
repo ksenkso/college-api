@@ -68,5 +68,22 @@ class UserMeta extends \yii\db\ActiveRecord
         ];
     }
 
+	/**
+	 * @param UserMeta[] $metaArray
+	 *
+	 * @return array
+	 */
+	public static function unpackMeta($metaArray) {
+
+		$meta = [];
+
+		foreach ( $metaArray as $item ) {
+			$meta[$item->meta_key] = $item->meta_value;
+		}
+
+		return $meta;
+
+	}
+
 
 }

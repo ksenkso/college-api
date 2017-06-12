@@ -14,6 +14,7 @@ use yii\web\IdentityInterface;
  * @property integer $group_id
  * @property string $first_name
  * @property string $last_name
+ * @property string patronymic
  * @property string $username
  * @property string $auth_key
  * @property string $password_hash
@@ -259,6 +260,10 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->getAuthKey() === $authKey;
     }
 
+	public function fullName() {
+		return $this->last_name . ' ' . $this->first_name . ' ' . $this->patronymic;
+    }
+
 
     /**
      * @inheritdoc
@@ -271,6 +276,11 @@ class User extends ActiveRecord implements IdentityInterface
 	public function getRoles() {
 		return $this->hasMany(AuthAssignment::className(), ['user_id' => 'id']);
     }
+
+	public function getFamily() {
+		return $this->hasOne(Family::className(), ['user_id' => 'id']);
+	}
+
 
 	public function getMetaEmployments() {
 
@@ -301,5 +311,9 @@ class User extends ActiveRecord implements IdentityInterface
 
 		return $this->hasMany(UserMeta::className(), ['user_id' => 'id'])->andWhere(['in', 'meta_key', UserMeta::META_BREEDING]);
 	}
+
+
+
+
 
 }

@@ -69,13 +69,7 @@ class Portfolio extends \yii\db\ActiveRecord
         ];
     }
 
-	public static function processPortfolio($user_id) {
-		$records = static::find()
-			->where([
-				'user_id' => $user_id
-			])
-			->all();
-
+	private static function groupRecords( $records ) {
 		$works = [];
 		$grades = [];
 		$courses = [];
@@ -127,6 +121,33 @@ class Portfolio extends \yii\db\ActiveRecord
 			}
 		}
 
+		return [$works,
+			$grades,
+			$courses,
+			$creative,
+			$sports,
+			$additional,
+			$olympiads,
+			$conferences,
+			$images];
+    }
+
+	public static function processPortfolio($user_id) {
+		$records = static::find()
+			->where([
+				'user_id' => $user_id
+			])
+			->all();
+
+		list($works,
+			$grades,
+			$courses,
+			$creative,
+			$sports,
+			$additional,
+			$olympiads,
+			$conferences,
+			$images) = static::groupRecords($records);
 
 		/**
 		 * @var ODText $reader
@@ -254,7 +275,6 @@ class Portfolio extends \yii\db\ActiveRecord
 
 		$filename = 'Портфолио_' . $user->last_name . substr($user->first_name, 0, 2) . '.docx';
 		$tp->saveAs($filename);
-
 
 
 		return $filename;

@@ -17,9 +17,16 @@ use Yii;
  * @property string $organization
  * @property string $analysis
  * @property string $conclusions
+ * @property integer $type
+ * @property integer $count
+ * @property integer $number
  */
 class Protocol extends \yii\db\ActiveRecord
 {
+
+	const PROTOCOL_OUTCLASS = 1;
+	const PROTOCOL_PARENTS = 2;
+
 	/**
 	 * @inheritdoc
 	 */
@@ -34,10 +41,11 @@ class Protocol extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'theme', 'purposes', 'form', 'date', 'plan', 'organization', 'analysis', 'conclusions'], 'required'],
-            [['user_id', 'date'], 'integer'],
+            [['user_id', 'theme', 'purposes', 'date', 'plan', 'conclusions', 'type'], 'required'],
+            [['user_id', 'date', 'type', 'count', 'number'], 'integer'],
             [['plan', 'organization', 'analysis', 'conclusions'], 'string'],
             [['theme', 'purposes', 'form'], 'string', 'max' => 255],
+
         ];
     }
 
@@ -58,5 +66,18 @@ class Protocol extends \yii\db\ActiveRecord
             'analysis' => 'Analysis',
             'conclusions' => 'Conclusions',
         ];
+    }
+
+	/**
+	 * @param $type
+	 *
+	 * @return \yii\db\ActiveQuery
+	 */
+	public static function findByType( $type ) {
+		return static::find()->where(['type' => $type]);
+    }
+
+	public function getProtocolType() {
+		return $this->hasOne(ProtocolType::className(), ['id' => 'type']);
     }
 }

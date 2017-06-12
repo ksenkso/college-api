@@ -76,7 +76,7 @@ return [
 		            'controller' => 'v1/document',
 		            'pluralize' => false,
 		            'extraPatterns' => [
-			            'GET,OPTIONS <type_id:\d+>/<user_id:\d+>' => 'view',
+			            'GET,OPTIONS <type_id:\d+>/<meta_id:\d+>' => 'view',
 			            'GET,OPTIONS <type_id:\d+>' => 'view',
 		            ]
 	            ],
@@ -101,7 +101,29 @@ return [
 	            [
 		            'class' => 'yii\rest\UrlRule',
 		            'controller' => 'v1/protocol',
-		            'pluralize' => false
+		            'pluralize' => false,
+		            'extraPatterns' => [
+			            'GET,OPTIONS by-type/<type:\d+>' => 'by-type',
+		            ]
+	            ],
+	            [
+		            'class' => 'yii\rest\UrlRule',
+		            'controller' => 'v1/protocol-type',
+		            'pluralize' => false,
+	            ],
+	            [
+		            'class' => 'yii\rest\UrlRule',
+		            'controller' => 'v1/family',
+		            'pluralize' => false,
+		            'extraPatterns' => [
+		            	'GET,OPTIONS by-user/<user_id:\d+>' => 'by-user',
+		            	'GET,OPTIONS by-type/<type:\d+>' => 'by-type'
+		            ]
+	            ],
+	            [
+		            'class' => 'yii\rest\UrlRule',
+		            'controller' => 'v1/spec',
+		            'pluralize' => false,
 	            ],
             ],
         ],

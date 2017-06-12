@@ -11,6 +11,7 @@ use Yii;
  * @property string $name
  * @property string $abbreviation
  * @property string $year
+ * @property integer $spec_id
  */
 class Group extends \yii\db\ActiveRecord
 {
@@ -28,10 +29,10 @@ class Group extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'abbreviation', 'year'], 'required'],
+            [['name', 'abbreviation', 'year', 'spec_id'], 'required'],
             [['name'], 'string', 'max' => 255],
             [['abbreviation'], 'string', 'max' => 10],
-            [['year'], 'integer'],
+            [['year', 'spec_id'], 'integer'],
         ];
     }
 
@@ -46,5 +47,9 @@ class Group extends \yii\db\ActiveRecord
             'abbreviation' => 'Abbreviation',
             'year' => 'Year',
         ];
+    }
+
+	public function getSpec() {
+		return $this->hasOne(Spec::className(), ['id' => 'spec_id']);
     }
 }
