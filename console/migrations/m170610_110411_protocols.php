@@ -8,13 +8,13 @@ class m170610_110411_protocols extends Migration
     {
 
     	$this->addColumn(
-    		'protocols',
+    		'protocol',
 		    'type',
 		    'int(6) NOT NULL'
 	    );
 
 	    $this->addColumn(
-		    'protocols',
+		    'protocol',
 		    'number',
 		    'int(6) NOT NULL DEFAULT 0'
 	    );
