@@ -182,6 +182,23 @@ class PortfolioController extends ApiController
 		return false;
 	}
 
+	public function actionUploadPhoto( $user_id ) {
+
+		$file = UploadedFile::getInstanceByName('file');
+
+		$record = new Portfolio();
+		$record->user_id = $user_id;
+		$record->content = $file->name;
+		$record->record_type = Portfolio::TYPE_ATTACHEMENT;
+
+		if ($record->save()) {
+			$file->saveAs(\Yii::getAlias('@app') . '/attachments/' . $file->name);
+			return true;
+		}
+
+		return false;
+	}
+
 
 
 }

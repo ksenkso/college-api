@@ -69,7 +69,7 @@ class Attachment extends \yii\db\ActiveRecord
 
 	    if ($width < 250 && $height < 480) return $path;
 
-    	$createImage = 'imagecreatefromjpg';
+    	$createImage = 'imagecreatefromjpeg';
     	$saveImage = 'imagejpg';
 
     	switch ($ext) {
@@ -78,7 +78,7 @@ class Attachment extends \yii\db\ActiveRecord
 			    $saveImage = 'imagepng';
 			    break;
 		    }
-
+		    case 'jpg':
 		    case 'jpeg': {
 			    $createImage = 'imagecreatefromjpeg';
 			    $saveImage = 'imagejpeg';
@@ -121,9 +121,15 @@ class Attachment extends \yii\db\ActiveRecord
 
     }
 
-    public function save( $runValidation = true, $attributeNames = null ) {
+    public function save( $runValidation = true, $attributeNames = null, $instance = null ) {
 
-    	$file = UploadedFile::getInstanceByName('attachment');
+    	if ($instance) {
+    		$file = $instance;
+	    } else {
+		    $file = UploadedFile::getInstanceByName('attachment');
+	    }
+
+
     	if ($file) {
 
     		$filename = 'uploads/' . sha1($file->name) . '.' . $file->extension;

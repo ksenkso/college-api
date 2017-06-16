@@ -9,6 +9,7 @@
 namespace frontend\modules\controllers ;
 
 
+use frontend\modules\models\Today;
 use frontend\modules\models\User;
 use Yii;
 
@@ -82,6 +83,16 @@ class StudentController extends ApiController
         	$auth = Yii::$app->authManager;
         	$studentRole = $auth->getRole('student');
         	$auth->assign($studentRole, $model->id);
+
+        	$today = new Today();
+        	$today->group_id = $model->group_id;
+        	$today->student_id = $model->id;
+        	$today->hours = '0000';
+        	$today->is_good = 0;
+        	$today->hours_good = '0000';
+
+        	$today->save();
+
             return $model;
         } else {
             return $model->getErrors();

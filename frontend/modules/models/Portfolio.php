@@ -132,6 +132,51 @@ class Portfolio extends \yii\db\ActiveRecord
 			$images];
     }
 
+	public static function processTitleList( $user_id ) {
+
+    	$user = User::findOne($user_id);
+
+		$group = Group::find()->where(['id' => $user->group_id])->with('spec')->one();
+
+    	$photo = Attachment::find()
+		    ->where(['user_id' => $user_id, 'type' => Attachment::TYPE_PHOTO])->one();
+
+    	if ($photo) {
+
+    		$tp = new TemplateProcessor(\Yii::getAlias('@app') . '/templates/tpl_portfolio_title.docx');
+    		$tp->setValue('studentName', $user->fullName());
+    		$tp->setValue('speciality', $group->spec->name);
+
+    		$filename = 'Титульный лист_' . time() . '.docx';
+
+    		$tp->saveAs($filename);
+
+		    /**
+		     * @var ODText $reader
+		     */
+		    $reader = IOFactory::createReader();
+		    $pw = $reader->load($filename);
+		    $sec = $pw->getSections();
+		    $photoSection = $sec[count($sec) - 1];
+		    //$photoSection = $pw->addSection();
+		    $photoSection->addImage(\Yii::getAlias('@app') . '/web/' . $photo->source, [
+			    'wrappingStyle' => 'square',
+			    'positioning' => 'absolute',
+			    'posHorizontal'    => \PhpOffice\PhpWord\Style\Image::POSITION_HORIZONTAL_CENTER,
+			    'posHorizontalRel' => 'margin',
+			    'posVerticalRel' => 'line',
+		    ]);
+
+
+
+		    $pw->save($filename);
+
+		    return $filename;
+
+	    }
+
+    }
+
 	public static function processPortfolio($user_id) {
 		$records = static::find()
 			->where([
@@ -149,15 +194,8 @@ class Portfolio extends \yii\db\ActiveRecord
 			$conferences,
 			$images) = static::groupRecords($records);
 
-		/**
-		 * @var ODText $reader
-		 */
-		$reader = IOFactory::createReader();
-		$pw = $reader->load(\Yii::getAlias('@app') . '/templates/tpl_portfolio_title.docx');
-		$photoSection = $pw->addSection();
-		$photoSection->addImage(\Yii::getAlias('@app') . '/attachments/test.jpg');
 
-		$photoSection->addPageBreak();
+
 
 
 		$tp = new TemplateProcessor(\Yii::getAlias('@app') . '/templates/tst.docx');

@@ -49,13 +49,20 @@ class AttachmentController extends ApiController
 	public function actions() {
 		$actions = parent::actions();
 
-		unset($actions['index'], $actions['view'], $actions['create'], $actions['view']);
+		unset($actions['index'], $actions['view'], $actions['create'], $actions['view'], $actions['delete']);
 
 		return $actions;
 	}
 
-	public function createAttachment( $user_id, $type_id ) {
+	public function createAttachment( $user_id, $type ) {
 
+	}
+
+	public function actionDelete( $id ) {
+
+		Attachment::findOne($id)->delete();
+
+		return $id;
 	}
 
 	public function actionIndex() {
@@ -68,13 +75,27 @@ class AttachmentController extends ApiController
 
 	}
 
+	public function actionView( $user_id, $type ) {
+		return Attachment::find()
+			->where(['user_id' => $user_id, 'type' => $type])
+			->asArray()
+			->all();
+
+	}
+
 	public function actionCreate($user_id, $type) {
 
 
+		if ($type == Attachment::TYPE_PHOTO) {
+			$model = Attachment::find()->where(['user_id' => $user_id, 'type' => Attachment::TYPE_PHOTO])->one();
+		} else {
+			$model = new Attachment();
+			$model->user_id = $user_id;
+			$model->type = $type;
+		}
 
-		$model = new Attachment();
-		$model->user_id = $user_id;
-		$model->type = $type;
+
+
 
 		if ($model->load(['Attachment' => \Yii::$app->request->post()]) && $model->save()) {
 			return $model;
@@ -83,6 +104,35 @@ class AttachmentController extends ApiController
 			return $model->getErrors();
 		}
 
+	}
+
+	public function actionLoad( $user_id ) {
+
+		$request = \Yii::$app->request->post();
+
+		$result = [];
+
+		\Yii::trace(json_encode($request));
+
+		$files = UploadedFile::getInstancesByName('attachments');
+
+
+		foreach ( $files as $i => $attachment ) {
+			$model = new Attachment();
+			preg_match("~([a-zA-z0-9_-]+)\.(\w+)$~", $request['titles'][$i], $matches);
+
+			$model->title = $matches[1];
+
+			$model->user_id = $user_id;
+			$model->type = Attachment::TYPE_DOC;
+			if ($model->save(true, null,  $attachment)) {
+				$result[] = $model;
+			} else {
+				return $model->getErrors();
+			}
+		}
+
+		return $result;
 	}
 
 

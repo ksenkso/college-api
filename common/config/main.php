@@ -94,8 +94,9 @@ return [
 		            'controller' => 'v1/attachment',
 		            'pluralize' => false,
 		            'extraPatterns' => [
-			            'GET,OPTIONS <user_id:\d+>/<type_id:\d+>' => 'view',
+			            'GET,OPTIONS <user_id:\d+>/<type:\d+>' => 'view',
 			            'POST,OPTIONS <user_id:\d+>/<type:\d+>' => 'create',
+			            'POST,OPTIONS load/<user_id:\d+>' => 'load',
 		            ]
 	            ],
 	            [
