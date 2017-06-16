@@ -51,7 +51,6 @@ class MenuController extends ApiController
             'groups' => ['title' => 'Группы', 'path' => 'groups'],
             'users' => ['title' => 'Пользователи', 'path' => 'users'],
             'documents' => ['title' => 'Документы', 'path' => 'documents'],
-            'hours' => ['title' => 'Посещаемость', 'path' => 'hours'],
 	        'journal' => ['title' => 'Журнал', 'external' => true, 'path' => 'http://' . (getenv('JOURNAL_DOAMIN') ? getenv('JOURNAL_DOAMIN') : 'journal.' . str_replace('api.','',getenv('VIRTUAL_HOST')))],
 	        'portfolio' => ['title' => 'Портфолио', 'path' => 'portfolio'],
         ];
@@ -69,7 +68,6 @@ class MenuController extends ApiController
 				        $menu['documents'],
 				        $menu['groups'],
 				        $menu['users'],
-				        $menu['hours'],
 				        $menu['portfolio'],
 				        $menu['journal'],
 			        ];
@@ -82,7 +80,6 @@ class MenuController extends ApiController
 				        $menu['calendar'],
 				        $menu['students'],
 				        $menu['documents'],
-				        $menu['hours'],
 				        $menu['portfolio'],
 				        $menu['journal'],
 
