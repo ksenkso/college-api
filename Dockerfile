@@ -50,6 +50,8 @@ RUN /usr/local/bin/composer create-project \
 
 ADD ./frontend.main-local.php /app/frontend/config/main-local.php
 
+RUN composer install phpoffice/phpword:v0.13.*
+
 COPY . /app
 
 # Configure nginx
